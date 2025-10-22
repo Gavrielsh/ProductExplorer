@@ -13,8 +13,7 @@ import {
 import type { Product } from '../types/product';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { toggleFavorite } from '../slices/productsSlice';
-import { useColorScheme } from 'react-native';
-import { makeTheme } from '../theme/theme';
+import { useTheme } from '../theme/ThemeProvider';
 
 interface Props {
   product: Product;
@@ -22,55 +21,29 @@ interface Props {
 }
 
 function ProductItem({ product, onPress }: Props) {
-  const t = makeTheme(useColorScheme());
+  const t = useTheme();
   const dispatch = useAppDispatch();
-  const favorites = useAppSelector((s) => s.products.favorites);
-  const isFav = favorites.includes(product.id);
+  const isFav = useAppSelector((s) => s.products.favorites.includes(product.id));
 
   // Animation for card press feedback
   const scale = React.useRef(new Animated.Value(1)).current;
-  const animateIn = () =>
-    Animated.spring(scale, {
-      toValue: 0.98,
-      useNativeDriver: true,
-      speed: 20,
-      bounciness: 3,
-    }).start();
-  const animateOut = () =>
-    Animated.spring(scale, {
-      toValue: 1,
-      useNativeDriver: true,
-      speed: 20,
-      bounciness: 3,
-    }).start();
+  const animateIn = () => Animated.spring(scale, { toValue: 0.98, useNativeDriver: true, speed: 20, bounciness: 3 }).start();
+  const animateOut = () => Animated.spring(scale, { toValue: 1, useNativeDriver: true, speed: 20, bounciness: 3 }).start();
 
   // Pulse animation for favorite button
   const favScale = React.useRef(new Animated.Value(1)).current;
   const pulse = () => {
     favScale.setValue(0.9);
-    Animated.spring(favScale, {
-      toValue: 1,
-      useNativeDriver: true,
-      speed: 20,
-      bounciness: 8,
-    }).start();
+    Animated.spring(favScale, { toValue: 1, useNativeDriver: true, speed: 20, bounciness: 8 }).start();
   };
 
-  // Handle main card press (navigates to product details)
-  const handleCardPress = React.useCallback(
-    () => onPress(product.id),
-    [onPress, product.id],
-  );
+  const handleCardPress = React.useCallback(() => onPress(product.id), [onPress, product.id]);
 
-  // Toggle product favorite status with animation + feedback
   const handleToggle = React.useCallback(() => {
     dispatch(toggleFavorite(product.id));
     pulse();
     if (Platform.OS === 'android') {
-      ToastAndroid.show(
-        isFav ? 'Removed from favorites' : 'Added to favorites',
-        ToastAndroid.SHORT,
-      );
+      ToastAndroid.show(isFav ? 'Removed from favorites' : 'Added to favorites', ToastAndroid.SHORT);
     } else {
       Alert.alert(isFav ? 'Removed from favorites' : 'Added to favorites');
     }
@@ -89,35 +62,22 @@ function ProductItem({ product, onPress }: Props) {
           pressed && { opacity: 0.98 },
         ]}
       >
-        {/* Product image */}
         <Image source={{ uri: product.image }} style={styles.image} />
 
         <View style={styles.content}>
-          {/* Product title */}
-          <Text numberOfLines={2} style={[styles.title, { color: t.colors.text }]}>
-            {product.title}
-          </Text>
-
-          {/* Product price */}
-          <Text style={[styles.price, { color: t.colors.text }]}>
-            ${product.price.toFixed(2)}
-          </Text>
+          <Text numberOfLines={2} style={[styles.title, { color: t.colors.text }]}>{product.title}</Text>
+          <Text style={[styles.price, { color: t.colors.text }]}>${product.price.toFixed(2)}</Text>
 
           <View style={styles.row}>
-            {/* Category tag */}
             <View style={[styles.pill, { backgroundColor: t.colors.primarySoft }]}>
               <Text style={{ color: t.colors.primary, fontWeight: '700', fontSize: 12 }}>
                 {product.category ?? 'General'}
               </Text>
             </View>
 
-            {/* Favorite button */}
             <Animated.View style={{ transform: [{ scale: favScale }] }}>
               <Pressable
-                onPress={(e) => {
-                  e.stopPropagation?.();
-                  handleToggle();
-                }}
+                onPress={(e) => { e.stopPropagation?.(); handleToggle(); }}
                 style={({ pressed }) => [
                   styles.favBtn,
                   { backgroundColor: isFav ? t.colors.secondary : t.colors.primary },
@@ -136,7 +96,6 @@ function ProductItem({ product, onPress }: Props) {
 
 export default React.memo(ProductItem);
 
-// Component styling
 const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',

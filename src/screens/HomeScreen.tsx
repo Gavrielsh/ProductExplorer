@@ -15,7 +15,7 @@ import { useAppDispatch, useAppSelector } from '../hooks';
 import { fetchProducts } from '../slices/productsSlice';
 import { selectProducts } from '../selectors/productsSelectors';
 import ProductItem from '../components/ProductItem';
-import { makeTheme } from '../theme/theme';
+import { useTheme, useThemeMode } from '../theme/ThemeProvider';
 import type { RootStackParamList } from '../navigation/AppNavigator';
 
 /**
@@ -26,15 +26,14 @@ type Nav = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 /**
  * HomeScreen
  * ----------
- * Fetches and displays a searchable list of products.
- * - On first mount (status === 'idle'), triggers a fetch.
- * - Allows searching by title/category (client-side filter).
- * - Supports pull-to-refresh + a small Fetch button in the top bar.
- * - Shows loading state, error banner, and empty-state UI.
- * - Uses FlatList performance tuning for smooth scrolling.
+ * - Search bar (separate)
+ * - Separate top action bar with: Fetch + Theme toggle
+ * - Pull-to-refresh and initial fetch
+ * - FlatList perf tweaks
  */
 export default function HomeScreen() {
-  const t = makeTheme();
+  const t = useTheme();
+  const { mode, toggle } = useThemeMode();
   const navigation = useNavigation<Nav>();
   const dispatch = useAppDispatch();
 
@@ -42,10 +41,8 @@ export default function HomeScreen() {
   const error = useAppSelector((s) => s.products.error);
   const items = useAppSelector(selectProducts);
 
-  // Local search query
   const [query, setQuery] = React.useState('');
 
-  // Derived filtered list (by title/category)
   const filtered = React.useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return items;
@@ -56,44 +53,37 @@ export default function HomeScreen() {
     });
   }, [items, query]);
 
-  // Initial fetch on first mount if idle
   React.useEffect(() => {
     if (status === 'idle') {
       dispatch(fetchProducts());
     }
   }, [status, dispatch]);
 
-  // Pull-to-refresh handler
   const onRefresh = React.useCallback(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
 
-  // Explicit fetch (top-bar button)
   const onFetchPress = React.useCallback(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
 
-  // Navigate to details
   const openDetails = React.useCallback(
     (id: number) => navigation.navigate('ProductDetails', { id }),
     [navigation],
   );
 
-  // Loading state (first load)
   if (status === 'loading' && items.length === 0) {
     return (
       <View style={[styles.center, { backgroundColor: t.colors.bg }]}>
         <ActivityIndicator color={t.colors.primary} />
-        <Text style={{ color: t.colors.text, marginTop: 8, fontWeight: '700' }}>
-          Loading products…
-        </Text>
+        <Text style={{ color: t.colors.text, marginTop: 8, fontWeight: '700' }}>Loading products…</Text>
       </View>
     );
   }
 
   return (
     <View style={{ flex: 1, backgroundColor: t.colors.bg }}>
-      {/* Top bar with search input and a small Fetch button */}
+      {/* Search bar */}
       <View style={[styles.topBar, { backgroundColor: t.colors.bg }]}>
         <View
           style={[
@@ -113,40 +103,51 @@ export default function HomeScreen() {
             autoCorrect={false}
             clearButtonMode="while-editing"
           />
+        </View>
+      </View>
+
+      {/* Action bar: Fetch + Theme toggle */}
+      <View style={[styles.actionBar, { backgroundColor: t.colors.bg }]}>
+        <View style={{ flexDirection: 'row', gap: 8 }}>
           <Pressable
             onPress={onFetchPress}
             style={({ pressed }) => [
-              styles.fetchBtn,
+              styles.btn,
               { backgroundColor: t.colors.primary },
               pressed && { opacity: 0.9 },
             ]}
           >
-            <Text style={styles.fetchText}>Fetch</Text>
+            <Text style={styles.btnText}>Fetch</Text>
+          </Pressable>
+
+          <Pressable
+            onPress={toggle}
+            style={({ pressed }) => [
+              styles.btn,
+              { backgroundColor: t.colors.card, borderWidth: StyleSheet.hairlineWidth, borderColor: t.colors.border },
+              pressed && { opacity: 0.9 },
+            ]}
+          >
+            <Text style={[styles.btnText, { color: t.colors.text }]}>
+              {mode === 'dark' ? 'Light Mode' : 'Dark Mode'}
+            </Text>
           </Pressable>
         </View>
       </View>
 
-      {/* Non-blocking error banner; list still renders if data exists */}
       {error ? (
-        <Text style={[styles.error, { color: t.colors.danger }]}>
-          Error: {error}
-        </Text>
+        <Text style={[styles.error, { color: t.colors.danger }]}>Error: {error}</Text>
       ) : null}
 
-      {/* Empty state */}
       {status !== 'loading' && filtered.length === 0 ? (
         <View style={[styles.center, { backgroundColor: t.colors.bg }]}>
-          <Text style={{ color: t.colors.textMuted, fontWeight: '700' }}>
-            No products match your search.
-          </Text>
+          <Text style={{ color: t.colors.textMuted, fontWeight: '700' }}>No products match your search.</Text>
         </View>
       ) : (
         <FlatList
           data={filtered}
           keyExtractor={(item) => String(item.id)}
-          renderItem={({ item }) => (
-            <ProductItem product={item} onPress={openDetails} />
-          )}
+          renderItem={({ item }) => <ProductItem product={item} onPress={openDetails} />}
           refreshControl={
             <RefreshControl
               refreshing={status === 'loading'}
@@ -156,7 +157,6 @@ export default function HomeScreen() {
               progressBackgroundColor={t.colors.card}
             />
           }
-          // Performance tuning for smoother lists
           initialNumToRender={10}
           maxToRenderPerBatch={8}
           windowSize={7}
@@ -170,7 +170,8 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  topBar: { paddingHorizontal: 12, paddingTop: 8, paddingBottom: 6, gap: 8 },
+  topBar: { paddingHorizontal: 12, paddingTop: 8, paddingBottom: 4, gap: 8 },
+  actionBar: { paddingHorizontal: 12, paddingBottom: 6 },
   searchWrap: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -182,11 +183,7 @@ const styles = StyleSheet.create({
   searchIcon: { fontSize: 16, marginRight: 6 },
   searchInput: { flex: 1, fontSize: 14, fontWeight: '500' },
   error: { paddingHorizontal: 12, marginBottom: 6 },
-  fetchBtn: {
-    marginLeft: 8,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-  },
-  fetchText: { color: '#fff', fontWeight: '800', fontSize: 12, letterSpacing: 0.2 },
+
+  btn: { borderRadius: 999, paddingHorizontal: 14, paddingVertical: 8 },
+  btnText: { color: '#fff', fontWeight: '800', fontSize: 12, letterSpacing: 0.2 },
 });

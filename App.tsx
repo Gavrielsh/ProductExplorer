@@ -2,34 +2,50 @@
 import React from 'react';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { Provider } from 'react-redux';
-import { store } from './src/store';
+import { store, persistor } from './src/store';
 import AppNavigator from './src/navigation/AppNavigator';
-import { useColorScheme, StatusBar, View, StyleSheet } from 'react-native';
-import { makeTheme } from './src/theme/theme';
+import { StatusBar, View, StyleSheet } from 'react-native';
+import { PersistGate } from 'redux-persist/integration/react';
 
-export default function App() {
-  const scheme = useColorScheme();
-  const t = makeTheme(scheme);
+// Theme provider/hooks
+import { ThemeProvider, useTheme } from './src/theme/ThemeProvider';
 
-  // תיאום צבעי נווט עם התֵמה
-  const navTheme = scheme === 'dark' ? DarkTheme : DefaultTheme;
+/**
+ * Inner app that consumes theme from ThemeProvider.
+ * Split to allow hooks usage after providers are mounted.
+ */
+function AppShell() {
+  const t = useTheme();
+
+  // Compose a React Navigation theme that reflects our tokens
+  const navTheme = t.isDark ? DarkTheme : DefaultTheme;
   navTheme.colors.background = t.colors.bg;
-  navTheme.colors.card = t.colors.card;
   navTheme.colors.text = t.colors.text;
-  navTheme.colors.border = t.colors.border;
-  navTheme.colors.primary = t.colors.primary;
+  navTheme.dark = t.isDark;
 
   return (
+    <View style={[styles.root, { backgroundColor: t.colors.bg }]}>
+      <StatusBar barStyle={t.isDark ? 'light-content' : 'dark-content'} backgroundColor={t.colors.bg} />
+      {
+        // Using createElement to avoid occasional JSX typing issues with PersistGate
+        React.createElement(
+          PersistGate as unknown as React.ComponentType<any>,
+          { persistor, loading: null },
+          <NavigationContainer theme={navTheme}>
+            <AppNavigator />
+          </NavigationContainer>
+        )
+      }
+    </View>
+  );
+}
+
+export default function App() {
+  return (
     <Provider store={store}>
-      <View style={[styles.root, { backgroundColor: t.colors.bg }]}>
-        <StatusBar
-          barStyle={t.isDark ? 'light-content' : 'dark-content'}
-          backgroundColor={t.colors.bg}
-        />
-        <NavigationContainer theme={navTheme}>
-          <AppNavigator />
-        </NavigationContainer>
-      </View>
+      <ThemeProvider>
+        <AppShell />
+      </ThemeProvider>
     </Provider>
   );
 }
