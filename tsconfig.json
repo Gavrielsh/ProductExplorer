@@ -1,0 +1,13 @@
+{
+  "extends": "@tsconfig/react-native/tsconfig.json",
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "strict": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitReturns": true
+  },
+  "include": ["src/**/*", "App.tsx", "index.js"],
+  "exclude": ["node_modules", "babel.config.js", "metro.config.js"]
+}
