@@ -7,6 +7,7 @@ import {
   Text,
   TextInput,
   RefreshControl,
+  Pressable,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -28,7 +29,7 @@ type Nav = NativeStackNavigationProp<RootStackParamList, 'Home'>;
  * Fetches and displays a searchable list of products.
  * - On first mount (status === 'idle'), triggers a fetch.
  * - Allows searching by title/category (client-side filter).
- * - Supports pull-to-refresh (manual reload removed).
+ * - Supports pull-to-refresh + a small Fetch button in the top bar.
  * - Shows loading state, error banner, and empty-state UI.
  * - Uses FlatList performance tuning for smooth scrolling.
  */
@@ -67,6 +68,11 @@ export default function HomeScreen() {
     dispatch(fetchProducts());
   }, [dispatch]);
 
+  // Explicit fetch (top-bar button)
+  const onFetchPress = React.useCallback(() => {
+    dispatch(fetchProducts());
+  }, [dispatch]);
+
   // Navigate to details
   const openDetails = React.useCallback(
     (id: number) => navigation.navigate('ProductDetails', { id }),
@@ -87,7 +93,7 @@ export default function HomeScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: t.colors.bg }}>
-      {/* Top bar with search input */}
+      {/* Top bar with search input and a small Fetch button */}
       <View style={[styles.topBar, { backgroundColor: t.colors.bg }]}>
         <View
           style={[
@@ -95,7 +101,6 @@ export default function HomeScreen() {
             { backgroundColor: t.colors.card, borderColor: t.colors.border },
           ]}
         >
-          {/* Simple search icon (text glyph) to avoid extra deps */}
           <Text style={[styles.searchIcon, { color: t.colors.textMuted }]}>⌕</Text>
           <TextInput
             placeholder="Search products…"
@@ -108,6 +113,16 @@ export default function HomeScreen() {
             autoCorrect={false}
             clearButtonMode="while-editing"
           />
+          <Pressable
+            onPress={onFetchPress}
+            style={({ pressed }) => [
+              styles.fetchBtn,
+              { backgroundColor: t.colors.primary },
+              pressed && { opacity: 0.9 },
+            ]}
+          >
+            <Text style={styles.fetchText}>Fetch</Text>
+          </Pressable>
         </View>
       </View>
 
@@ -167,4 +182,11 @@ const styles = StyleSheet.create({
   searchIcon: { fontSize: 16, marginRight: 6 },
   searchInput: { flex: 1, fontSize: 14, fontWeight: '500' },
   error: { paddingHorizontal: 12, marginBottom: 6 },
+  fetchBtn: {
+    marginLeft: 8,
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  fetchText: { color: '#fff', fontWeight: '800', fontSize: 12, letterSpacing: 0.2 },
 });
