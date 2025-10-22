@@ -14,7 +14,7 @@ import { useAppDispatch, useAppSelector } from '../hooks';
 import { fetchProducts } from '../slices/productsSlice';
 import { selectProducts } from '../selectors/productsSelectors';
 import ProductItem from '../components/ProductItem';
-import { makeTheme } from '../theme';
+import { makeTheme } from '../theme/theme';
 import type { RootStackParamList } from '../navigation/AppNavigator';
 
 /**
@@ -33,17 +33,12 @@ type Nav = NativeStackNavigationProp<RootStackParamList, 'Home'>;
  * - Uses FlatList performance tuning for smooth scrolling.
  */
 export default function HomeScreen() {
-  // Theme colors (light/dark) resolved at render-time
   const t = makeTheme();
   const navigation = useNavigation<Nav>();
   const dispatch = useAppDispatch();
 
-  // Slice state
   const status = useAppSelector((s) => s.products.status);
   const error = useAppSelector((s) => s.products.error);
-  const favorites = useAppSelector((s) => s.products.favorites);
-
-  // All items from store, then filter by search query
   const items = useAppSelector(selectProducts);
 
   // Local search query
