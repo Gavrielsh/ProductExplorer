@@ -10,7 +10,7 @@ import {
   ToastAndroid,
   Alert,
 } from 'react-native';
-import { Product } from '../types/product';
+import type { Product } from '../types/product';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { toggleFavorite } from '../slices/productsSlice';
 import { useColorScheme } from 'react-native';
