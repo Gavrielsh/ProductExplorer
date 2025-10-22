@@ -38,7 +38,7 @@ function HomeStackScreen() {
       <HomeStack.Screen
         name="Home"
         component={HomeScreen}
-        options={{ title: 'Discover' }}
+        options={{ title: 'Product Explorer' }}
       />
       <HomeStack.Screen
         name="ProductDetails"
