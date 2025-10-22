@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import type { RootState } from '../store';
-import { Product } from '../types/product';
+import type { Product } from '../types/product';
 
 /**
  * selectProducts
