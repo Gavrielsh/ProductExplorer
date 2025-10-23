@@ -60,6 +60,11 @@
   },
   "jest": {
     "preset": "react-native",
+      "transformIgnorePatterns": [
+    "node_modules/(?!(jest-)?react-native|@react-native|@react-navigation)"
+  ],
+  "moduleNameMapper": {
+    "\\.(jpg|jpeg|png)$": "<rootDir>/src/__mocks__/fileMock.js",
     "moduleFileExtensions": [
       "ts",
       "tsx",
@@ -69,4 +74,4 @@
       "node"
     ]
   }
-}
+}}
