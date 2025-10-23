@@ -63,36 +63,6 @@ https://drive.google.com/file/d/1qJVP7rGUUacImDJ8gf-_CjR2vxu6Jxuy/view?usp=shari
 
 ---
 
-## 📂 Project Structure
-ProductExplorer/
-├── App.tsx
-├── src/
-│ ├── components/
-│ │ └── ProductItem.tsx
-│ ├── navigation/
-│ │ └── AppNavigator.tsx
-│ ├── screens/
-│ │ ├── HomeScreen.tsx
-│ │ ├── ProductDetailsScreen.tsx
-│ │ └── FavoritesScreen.tsx
-│ ├── store/
-│ │ ├── index.ts
-│ │ └── productsSlice.ts
-│ ├── theme/
-│ │ ├── theme.ts
-│ │ └── ThemeProvider.tsx
-│ ├── selectors/
-│ │ └── productsSelectors.ts
-│ ├── tests/
-│ │ ├── productsSlice.test.ts
-│ │ ├── navigation.test.tsx
-│ │ └── badge.test.tsx
-│ └── types/
-│ └── product.ts
-
-
----
-
 ## 🧠 Technical Highlights
 - **PersistGate Integration** – waits for Redux state rehydration before rendering.  
 - **ThemeProvider** – manages light/dark/system themes dynamically.  
