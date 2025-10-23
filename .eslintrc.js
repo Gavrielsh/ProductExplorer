@@ -3,19 +3,27 @@ module.exports = {
   root: true,
   env: { es6: true, node: true, jest: true },
   parser: '@typescript-eslint/parser',
-  parserOptions: { ecmaFeatures: { jsx: true } },
-  plugins: ['@typescript-eslint', 'prettier'],
+  parserOptions: { ecmaFeatures: { jsx: true }, sourceType: 'module' },
+  plugins: ['@typescript-eslint', 'prettier', 'unused-imports'],
   extends: [
     '@react-native-community',
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
   ],
   rules: {
+    // Formatting
     'prettier/prettier': 'error',
+
+    // Common React Native ergonomics
     'react-native/no-inline-styles': 'off',
     'no-console': ['warn', { allow: ['error', 'warn'] }],
-    'no-duplicate-imports': 'error',
-    'react-hooks/exhaustive-deps': 'warn',
+
+    // TypeScript strictness
+    '@typescript-eslint/no-explicit-any': 'warn',
+    '@typescript-eslint/consistent-type-imports': ['warn', { fixStyle: 'separate-type-imports' }],
+
+    // Unused imports/vars cleanup
+    'unused-imports/no-unused-imports': 'error',
     '@typescript-eslint/no-unused-vars': [
       'warn',
       { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },

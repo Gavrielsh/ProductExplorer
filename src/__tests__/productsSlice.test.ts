@@ -1,46 +1,66 @@
-
-import productsReducer, {
-  toggleFavorite,
-  fetchProducts,
-} from '../slices/productsSlice';
-import type { ProductsState } from '../slices/productsSlice';
 import axios from 'axios';
-import { AnyAction } from '@reduxjs/toolkit';
+import { configureStore, ThunkDispatch, AnyAction } from '@reduxjs/toolkit';
+import productsReducer, { toggleFavorite, fetchProducts } from '../slices/productsSlice';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
+/**
+ * Create a minimal test store with our products reducer only.
+ * Using a bare store keeps tests fast and focused.
+ */
+function makeTestStore() {
+  return configureStore({
+    reducer: { products: productsReducer },
+  });
+}
+type AppStore = ReturnType<typeof makeTestStore>;
+type AppState = ReturnType<AppStore['getState']>;
+type AppDispatch = ThunkDispatch<AppState, unknown, AnyAction>;
+
 describe('productsSlice', () => {
-  const initialState: ProductsState = {
-    items: [],
-    favorites: [],
-    status: 'idle',
-    error: null,
-  };
-
-  it('should return the initial state', () => {
-    expect(productsReducer(undefined, {} as AnyAction)).toEqual(initialState);
+  it('should have a sane initial state', () => {
+    const store = makeTestStore();
+    const state = store.getState().products;
+    expect(state.items).toEqual([]);
+    expect(state.favorites).toEqual([]);
+    expect(state.status).toBe('idle');
+    expect(state.error).toBeNull();
   });
 
-  it('should toggle a favorite ID', () => {
-    const state1 = productsReducer(initialState, toggleFavorite(1));
-    expect(state1.favorites).toContain(1);
-
-    const state2 = productsReducer(state1, toggleFavorite(1));
-    expect(state2.favorites).not.toContain(1);
+  it('toggleFavorite should add and then remove the id', () => {
+    const store = makeTestStore();
+    store.dispatch(toggleFavorite(123));
+    expect(store.getState().products.favorites).toEqual([123]);
+    store.dispatch(toggleFavorite(123));
+    expect(store.getState().products.favorites).toEqual([]);
   });
 
-  it('should handle fetchProducts success', async () => {
-    const mockData = [
-      { id: 1, title: 'Test Product', price: 10, description: 'x', image: '' },
-    ];
-    mockedAxios.get.mockResolvedValueOnce({ data: mockData });
+  it('fetchProducts pending/fulfilled should populate items', async () => {
+    const store = makeTestStore();
+    mockedAxios.get.mockResolvedValueOnce({
+      data: [{ id: 1, title: 'A', price: 10, image: '', description: 'D', category: 'C' }],
+    });
 
-    const dispatch = jest.fn();
-    const thunk = fetchProducts();
-    const result = await thunk(dispatch, () => ({}), undefined);
+    const dispatch = store.dispatch as AppDispatch;
+    const promise = dispatch(fetchProducts()); // pending
+    expect(store.getState().products.status).toBe('loading');
 
-    expect(mockedAxios.get).toHaveBeenCalledWith('https://fakestoreapi.com/products');
-    expect(result.payload).toEqual(mockData);
+    await promise; // fulfilled
+    const s = store.getState().products;
+    expect(s.status).toBe('succeeded');
+    expect(s.items).toHaveLength(1);
+    expect(s.items[0]!.id).toBe(1);
+  });
+
+  it('fetchProducts rejected should set error state', async () => {
+    const store = makeTestStore();
+    mockedAxios.get.mockRejectedValueOnce(new Error('network down'));
+
+    const dispatch = store.dispatch as AppDispatch;
+    await dispatch(fetchProducts()); // rejected
+    const s = store.getState().products;
+    expect(s.status).toBe('failed');
+    expect(s.error).toBeTruthy();
   });
 });

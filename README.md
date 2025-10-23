@@ -1,64 +1,151 @@
-# Product Explorer
+# Product Explorer  
+**Student:** Gavriel Shalem  
+**ID:** 205461486  
 
-This is a simple React Native application built without Expo. It allows you to fetch a list of products from the [FakeStoreAPI](https://fakestoreapi.com) and explore them. You can mark products as favourites, view details, and see a badge indicating the number of favourite items in the tab bar.
+---
 
-## Features
+## 📱 Project Overview  
+**Product Explorer** is a React Native (CLI) mobile application that allows users to explore products from the open [FakeStore API](https://fakestoreapi.com), view product details, and manage a favorites list.  
 
-- **Home screen** — Displays a button to load products from the API. Once fetched, a list of products is shown with their image, title and price. Each item includes a heart icon to toggle it as a favourite and navigates to a detailed view when tapped.
-- **Product details** — Shows the full product image, title, price and description. You can add or remove the product from your favourites directly from this screen.
-- **Favourites screen** — Lists all favourited products. If you have not yet favourited anything a placeholder message is shown. A badge on the tab bar displays the current count of favourited items.
-- **State management** — Implemented using [Redux Toolkit](https://redux-toolkit.js.org/). Products are fetched via an async thunk and favourites are stored as a list of product IDs.
-- **Navigation** — Handled via [React Navigation](https://reactnavigation.org/) using a bottom tab navigator and a nested native stack.
-- **TypeScript** — The project uses TypeScript throughout.
+The project was developed according to the assignment requirements, using React Native CLI, Redux Toolkit, React Navigation, TypeScript, and Jest.  
+In addition, several improvements were implemented such as offline caching and a dark/light theme toggle.
 
-## Getting started
+---
+
+## 🧩 Core Features
+
+### 🏠 Home Screen
+- **Fetch** button to retrieve products from the API.  
+- Displays product **image, title, price**, and **favorite toggle**.  
+- **Search bar** to filter products locally.  
+- **Pull-to-refresh** and automatic fetch on mount.  
+- **Action bar** with two buttons: **Fetch** and **Theme toggle (Dark/Light)**.  
+- Optimized list using **FlatList** for smooth scrolling and virtualization.
+
+### ℹ️ Product Details Screen
+- Displays full **image, title, price, and description**.  
+- Allows users to **add or remove favorites**.  
+- Includes a **fade transition animation** between screens.
+
+### ❤️ Favorites Screen
+- Displays all favorited products.  
+- Allows users to **remove items** from favorites.  
+- Shows an **empty-state message** when there are no favorites.
+
+---
+
+## ⚙️ Technical Implementation
+
+| Category | Implementation |
+|-----------|----------------|
+| **Framework** | React Native CLI (not Expo) |
+| **State Management** | Redux Toolkit + Async Thunks |
+| **Persistence** | redux-persist + AsyncStorage (favorites + items) |
+| **Navigation** | React Navigation (Bottom Tabs + Native Stack) |
+| **Language** | TypeScript |
+| **Components** | Functional Components + React Hooks |
+| **UI Theme** | Custom Theme with Light/Dark/System modes |
+| **Icons** | react-native-vector-icons/Ionicons |
+| **Testing** | Jest (unit and integration tests) |
+| **Offline Caching** | Products and favorites persisted locally |
+| **Animations** | Fade transitions between screens |
+| **Linting** | ESLint with unused-imports cleanup |
+
+---
+
+## 🚀 Performance & Optimization
+- **Memoization** using `useCallback`, `useMemo`, and `React.memo`.  
+- **FlatList** optimization (windowSize, batch rendering, removeClippedSubviews).  
+- **Redux selectors** to minimize unnecessary re-renders.  
+- Cached API results via `redux-persist` to avoid redundant fetches.
+
+---
+
+## 📂 Project Structure
+ProductExplorer/
+├── App.tsx
+├── src/
+│ ├── components/
+│ │ └── ProductItem.tsx
+│ ├── navigation/
+│ │ └── AppNavigator.tsx
+│ ├── screens/
+│ │ ├── HomeScreen.tsx
+│ │ ├── ProductDetailsScreen.tsx
+│ │ └── FavoritesScreen.tsx
+│ ├── store/
+│ │ ├── index.ts
+│ │ └── productsSlice.ts
+│ ├── theme/
+│ │ ├── theme.ts
+│ │ └── ThemeProvider.tsx
+│ ├── selectors/
+│ │ └── productsSelectors.ts
+│ ├── tests/
+│ │ ├── productsSlice.test.ts
+│ │ ├── navigation.test.tsx
+│ │ └── badge.test.tsx
+│ └── types/
+│ └── product.ts
+
+
+---
+
+## 🧠 Technical Highlights
+- **PersistGate Integration** – waits for Redux state rehydration before rendering.  
+- **ThemeProvider** – manages light/dark/system themes dynamically.  
+- **Reusable Hooks** – `useAppDispatch`, `useAppSelector`, `useTheme`, `useThemeMode`.  
+- **Error Handling** – shows a visual error banner when API fails.  
+- **Responsive Design** – consistent spacing, adaptive colors, clean layout.  
+
+---
+
+## 🧪 Unit Tests
+| Test File | Description |
+|------------|--------------|
+| `productsSlice.test.ts` | Verifies reducer and async thunk (fetchProducts). |
+| `navigation.test.tsx` | Tests navigation from Home → Product Details. |
+| `badge.test.tsx` | Checks that the Favorites tab badge updates correctly. |
+
+---
+
+## 📝 How to Run
 
 ### Prerequisites
-
-You need to have the React Native CLI environment installed on your machine. Follow the official [React Native environment setup guide](https://reactnative.dev/docs/environment-setup) for your platform (Android or iOS).
+- Node.js 18+  
+- Android Studio SDK configured (`ANDROID_HOME` or `local.properties`)  
+- Java 17 (Temurin or Zulu)
 
 ### Installation
-
-Clone the repository and install the dependencies:
-
-```sh
-git clone <repository-url>
-cd ProductExplorer
+```bash```
 npm install
-```
 
-### Running the app
+## Run the App
 
-Start the Metro bundler:
+npm start        # Start Metro bundler
+npm run android  # Build & run on Android emulator/device
 
-```sh
-npm start
-```
+## Run Tests
+npm test
 
-In a separate terminal window, run the project on your target platform:
-
-```sh
-# For Android (make sure an emulator or device is connected)
+## ⚡Troubleshooting
+npm start -- --reset-cache
+cd android && gradlew clean && cd ..
 npm run android
 
-# For iOS (requires Xcode)
-npm run ios
-```
+### 📈 Bonus Features Implemented
 
-### Running tests
+✅ TypeScript throughout the project
+✅ Redux-Persist (Offline caching)
+✅ Jest unit tests
+✅ Light/Dark theme toggle
+✅ Fade screen transition
+✅ ESLint auto-cleanup
 
-The project includes a simple Jest test that verifies the favourites toggle logic. Run the tests with:
+### 📄 Summary
 
-```sh
-npm test
-```
-
-## Notes
-
-- The app makes network requests to the free FakeStoreAPI. If you run into issues fetching data, ensure your device has an internet connection.
-- Icons are intentionally kept simple (using text characters) to avoid additional native dependencies. You can replace them with a proper icon library such as `react-native-vector-icons` if desired.
-- This repository does not include a pre-built APK or IPA. To generate one, follow the standard React Native build process for your platform.
-
-## License
-
-This project is provided for assessment purposes and carries no specific license.
+All functional and technical requirements of the Product Explorer assignment were fully implemented:
+- Home, Details, and Favorites screens
+- Redux Toolkit, React Navigation, and TypeScript
+- Performance optimization, Offline persistence, and Tests
+Additional improvements like Dark/Light mode toggle and screen animations elevate the UX and code quality to production standards.
