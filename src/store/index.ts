@@ -14,35 +14,29 @@ import {
 } from 'redux-persist';
 
 /**
- * Persist config for the products slice.
- * We only persist the 'favorites' field to keep storage small
- * and avoid caching remote data ('items') across sessions.
- */
-const productsPersistConfig = {
-  key: 'products',
-  storage: AsyncStorage,
-  whitelist: ['favorites'], // persist only favorites
-};
-
-/**
  * Root reducer
- * - Wrap only the products slice with persistence.
+ * We persist the products slice with a whitelist so only relevant keys are saved.
+ * This gives "offline caching" for items and favorites without bloating storage.
  */
 const rootReducer = combineReducers({
-  products: persistReducer(productsPersistConfig, productsReducer),
+  products: persistReducer(
+    {
+      key: 'products',
+      storage: AsyncStorage,
+      // Persist both product list (items) and favorites for offline UX
+      whitelist: ['items', 'favorites'],
+      // Version bump for future migrations if shape changes
+      version: 1,
+    },
+    productsReducer
+  ),
 });
 
-/**
- * Store configuration
- * - Adds redux-persist compatible serializableCheck ignores.
- * - Uses RTK default middleware (thunk + immutability/serializable checks).
- */
 export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        // Ignore redux-persist internal non-serializable action payloads
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }),
@@ -50,7 +44,7 @@ export const store = configureStore({
 
 /**
  * Persistor
- * - Used by <PersistGate> to delay UI until rehydration finishes.
+ * Used by <PersistGate> to delay UI until rehydration finishes.
  */
 export const persistor = persistStore(store);
 

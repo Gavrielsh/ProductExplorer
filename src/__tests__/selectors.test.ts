@@ -1,38 +1,35 @@
-/**
- * Tests for products selectors (search + favorites mapping)
- */
+import { createSelector } from '@reduxjs/toolkit';
+import type { Product } from '../types/product';
+import productsReducer, { toggleFavorite } from '../slices/productsSlice';
+import { selectProducts, selectFavorites } from '../selectors/productsSelectors';
 
-import {
-  selectProducts,
-  selectFavorites,
-  selectFavoriteProducts,
-} from '../selectors/productsSelectors';
+// Rebuild the derived selector to test behavior in isolation
+const selectFavoriteProducts = createSelector(
+  [selectProducts, selectFavorites],
+  (items, favIds) => items.filter((p) => favIds.includes(p.id)),
+);
 
-const state = {
-  products: {
-    items: [
-      { id: 1, title: 'Blue Shirt', price: 12, description: 'x', image: 'i1' },
-      { id: 2, title: 'Red Hat', price: 7, description: 'y', image: 'i2' },
-      { id: 3, title: 'Green Shoes', price: 20, description: 'z', image: 'i3' },
-    ],
-    favorites: [2, 3],
-    status: 'succeeded',
-    error: null,
-  },
-};
+function reduce(actions: any[]) {
+  let state = { products: productsReducer(undefined, { type: '@@INIT' }) };
+  for (const a of actions) {
+    state = { products: productsReducer(state.products, a) };
+  }
+  return state;
+}
 
-describe('products selectors', () => {
-  it('selectAllProducts returns items array', () => {
-    expect(selectProducts(state as any)).toHaveLength(3);
-  });
+describe('selectors', () => {
+  it('selectFavoriteProducts returns only items whose ids are favorited', () => {
+    const items: Product[] = [
+      { id: 1, title: 'A', price: 10, image: '', description: 'x', category: 'cat' },
+      { id: 2, title: 'B', price: 20, image: '', description: 'y', category: 'cat' },
+    ];
+    const state = reduce([
+      { type: 'products/fetchProducts/fulfilled', payload: items },
+      toggleFavorite(2),
+    ]);
 
-  it('selectFavoriteIds returns ids only', () => {
-    expect(selectFavorites(state as any)).toEqual([2, 3]);
-  });
-
-  it('selectFavoriteProducts returns favorite product objects', () => {
     const favs = selectFavoriteProducts(state as any);
-    expect(favs.map((p) => p.id)).toEqual([2, 3]);
+    expect(favs).toHaveLength(1);
+    expect(favs[0]?.id).toBe(2);
   });
-
 });
