@@ -10,6 +10,8 @@
 The project was developed according to the assignment requirements, using React Native CLI, Redux Toolkit, React Navigation, TypeScript, and Jest.  
 In addition, several improvements were implemented such as offline caching and a dark/light theme toggle.
 
+## apk file 
+https://drive.google.com/file/d/1qJVP7rGUUacImDJ8gf-_CjR2vxu6Jxuy/view?usp=sharing
 ---
 
 ## 🧩 Core Features
