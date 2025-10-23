@@ -10,6 +10,8 @@
 The project was developed according to the assignment requirements, using React Native CLI, Redux Toolkit, React Navigation, TypeScript, and Jest.  
 In addition, several improvements were implemented such as offline caching and a dark/light theme toggle.
 
+## apk file 
+https://drive.google.com/file/d/1qJVP7rGUUacImDJ8gf-_CjR2vxu6Jxuy/view?usp=sharing
 ---
 
 ## 🧩 Core Features
@@ -58,36 +60,6 @@ In addition, several improvements were implemented such as offline caching and a
 - **FlatList** optimization (windowSize, batch rendering, removeClippedSubviews).  
 - **Redux selectors** to minimize unnecessary re-renders.  
 - Cached API results via `redux-persist` to avoid redundant fetches.
-
----
-
-## 📂 Project Structure
-ProductExplorer/
-├── App.tsx
-├── src/
-│ ├── components/
-│ │ └── ProductItem.tsx
-│ ├── navigation/
-│ │ └── AppNavigator.tsx
-│ ├── screens/
-│ │ ├── HomeScreen.tsx
-│ │ ├── ProductDetailsScreen.tsx
-│ │ └── FavoritesScreen.tsx
-│ ├── store/
-│ │ ├── index.ts
-│ │ └── productsSlice.ts
-│ ├── theme/
-│ │ ├── theme.ts
-│ │ └── ThemeProvider.tsx
-│ ├── selectors/
-│ │ └── productsSelectors.ts
-│ ├── tests/
-│ │ ├── productsSlice.test.ts
-│ │ ├── navigation.test.tsx
-│ │ └── badge.test.tsx
-│ └── types/
-│ └── product.ts
-
 
 ---
 

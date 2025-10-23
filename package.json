@@ -60,6 +60,13 @@
   },
   "jest": {
     "preset": "react-native",
+      "transformIgnorePatterns": [
+    "node_modules/(?!(jest-)?react-native|@react-native|@react-navigation)"
+  ],
+  "moduleNameMapper": {
+    "\\.(jpg|jpeg|png)$": "<rootDir>/src/__mocks__/fileMock.js",
+        "^react-native-vector-icons/Ionicons$": "<rootDir>/src/__mocks__/Ionicons.js"
+  },
     "moduleFileExtensions": [
       "ts",
       "tsx",
