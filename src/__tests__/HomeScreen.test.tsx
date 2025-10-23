@@ -6,6 +6,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import productsReducer from '../slices/productsSlice';
 import HomeScreen from '../screens/HomeScreen';
 import { ThemeProvider } from '../theme/ThemeProvider';
+import { NavigationContainer } from '@react-navigation/native';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -18,8 +19,10 @@ function renderWithStore(ui: React.ReactElement) {
   return {
     ...render(
       <Provider store={store}>
-        <ThemeProvider>{ui}</ThemeProvider>
-      </Provider>,
+        <ThemeProvider>
+          <NavigationContainer>{ui}</NavigationContainer>
+        </ThemeProvider>
+      </Provider>
     ),
     store,
   };

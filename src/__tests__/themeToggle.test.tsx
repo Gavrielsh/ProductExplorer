@@ -7,8 +7,14 @@ import productsReducer from '../slices/productsSlice';
 import { ThemeProvider } from '../theme/ThemeProvider';
 
 // Force the system scheme to 'light' so initial label is predictable
-jest.mock('react-native/Libraries/Utilities/useColorScheme', () => {
-  return () => 'light';
+jest.mock('react-native/Libraries/Settings/Settings', () => ({
+  get: jest.fn(),
+  set: jest.fn(),
+}));
+
+jest.mock('react-native', () => {
+  const RN = jest.requireActual('react-native');
+  return { ...RN, useColorScheme: () => 'light' };
 });
 
 function renderHome() {
