@@ -99,4 +99,3 @@ All functional and technical requirements of the Product Explorer assignment wer
 - Home, Details, and Favorites screens
 - Redux Toolkit, React Navigation, and TypeScript
 - Performance optimization, Offline persistence, and Tests
-Additional improvements likeark/Light mode toggle and screen animations elevate the UX and code quality to production standards.
