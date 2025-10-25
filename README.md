@@ -1,6 +1,5 @@
 # Product Explorer  
-**Student:** Gavriel Shalem  
-**ID:** 205461486  
+Gavriel Shalem  
 
 ---
 
@@ -8,7 +7,7 @@
 **Product Explorer** is a React Native (CLI) mobile application that allows users to explore products from the open [FakeStore API](https://fakestoreapi.com), view product details, and manage a favorites list.  
 
 The project was developed according to the assignment requirements, using React Native CLI, Redux Toolkit, React Navigation, TypeScript, and Jest.  
-In addition, several improvements were implemented such as offline caching and a dark/light theme toggle.
+
 
 ## apk file 
 https://drive.google.com/file/d/17F5xPdGw2LXl_y0YFOCEHU89yM86fLb1/view?usp=sharing---
@@ -26,31 +25,12 @@ https://drive.google.com/file/d/17F5xPdGw2LXl_y0YFOCEHU89yM86fLb1/view?usp=shari
 ### ℹ️ Product Details Screen
 - Displays full **image, title, price, and description**.  
 - Allows users to **add or remove favorites**.  
-- Includes a **fade transition animation** between screens.
+- Includes a **transition animation** between screens.
 
 ### ❤️ Favorites Screen
 - Displays all favorited products.  
 - Allows users to **remove items** from favorites.  
 - Shows an **empty-state message** when there are no favorites.
-
----
-
-## ⚙️ Technical Implementation
-
-| Category | Implementation |
-|-----------|----------------|
-| **Framework** | React Native CLI (not Expo) |
-| **State Management** | Redux Toolkit + Async Thunks |
-| **Persistence** | redux-persist + AsyncStorage (favorites + items) |
-| **Navigation** | React Navigation (Bottom Tabs + Native Stack) |
-| **Language** | TypeScript |
-| **Components** | Functional Components + React Hooks |
-| **UI Theme** | Custom Theme with Light/Dark/System modes |
-| **Icons** | react-native-vector-icons/Ionicons |
-| **Testing** | Jest (unit and integration tests) |
-| **Offline Caching** | Products and favorites persisted locally |
-| **Animations** | Fade transitions between screens |
-| **Linting** | ESLint with unused-imports cleanup |
 
 ---
 
@@ -119,4 +99,4 @@ All functional and technical requirements of the Product Explorer assignment wer
 - Home, Details, and Favorites screens
 - Redux Toolkit, React Navigation, and TypeScript
 - Performance optimization, Offline persistence, and Tests
-Additional improvements like Dark/Light mode toggle and screen animations elevate the UX and code quality to production standards.
+Additional improvements likeark/Light mode toggle and screen animations elevate the UX and code quality to production standards.
