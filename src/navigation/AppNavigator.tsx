@@ -7,7 +7,6 @@ import ProductDetailsScreen from '../screens/ProductDetailsScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
 import { useAppSelector } from '../hooks';
 import { useTheme } from '../theme/ThemeProvider';
-// Removed unused import: import { press } from '@testing-library/react-native/build/user-event/press';
 
 /**
  * Defines the parameters expected by each screen in the Native Stack navigators.
