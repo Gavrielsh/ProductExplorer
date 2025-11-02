@@ -49,7 +49,7 @@ function HomeStack() {
       <Stack.Screen
         name="Home"
         component={HomeDashboard}
-        options={{ title: 'Home' }}
+        options={{ title: 'Home', headerShown: false }}
       />
       <Stack.Screen
         name="Products"

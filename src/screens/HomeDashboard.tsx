@@ -1,3 +1,4 @@
+// src/screens/HomeDashboard.tsx
 import React, { useRef } from 'react';
 import {
   View,
@@ -10,11 +11,12 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../theme/ThemeProvider';
+import ThemeToggleButton from '../components/ThemeToggleButton';
 
 /**
- * BigTile Component
- * -----------------
- * A reusable square tile with icon + label and press animation.
+ * BigTile
+ * -------
+ * Reusable square tile with icon + label and a subtle press animation.
  */
 type TileProps = {
   label: string;
@@ -60,26 +62,27 @@ const BigTile = ({ label, icon, onPress }: TileProps) => {
 };
 
 /**
- * HomeDashboard Screen
- * --------------------
- * Replaces the old HomeScreen with a clean dashboard layout.
- * Displays two large animated buttons:
- * 1. "Shop" – navigates to Products list
- * 2. "Favorites" – navigates to Favorites tab
+ * HomeDashboard
+ * -------------
+ * Minimal home screen with two large buttons (Shop / Favorites)
+ * and a floating ThemeToggleButton for Light/Dark mode.
  */
 export default function HomeDashboard() {
   const theme = useTheme();
   const navigation = useNavigation<any>();
 
-  // Navigate to the Products screen inside this stack
+  // Navigate to product list inside the Home stack
   const goProducts = () => setTimeout(() => navigation.navigate('Products'), 90);
 
-  // Navigate to the Favorites tab (parent navigator)
+  // Navigate to Favorites tab (parent Tab navigator)
   const goFavorites = () =>
     setTimeout(() => navigation.getParent()?.navigate('FavoritesTab'), 90);
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.bg }]}>
+      {/* Floating theme toggle (top-right) */}
+      <ThemeToggleButton style={styles.fab} />
+
       <Text style={[styles.title, { color: theme.colors.text, ...theme.typography.h1 }]}>
         Product Explorer
       </Text>
@@ -112,16 +115,17 @@ const styles = StyleSheet.create({
   },
   tile: {
     flex: 1,
-    aspectRatio: 1, // Keeps each tile perfectly square
+    aspectRatio: 1, // Keeps each tile square
     borderRadius: 18,
     overflow: 'hidden',
   },
-  tileInner: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-  },
+  tileInner: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 10 },
   tileLabel: { fontSize: 16, fontWeight: '600' },
   subtitle: { textAlign: 'center', marginTop: 24 },
+  fab: {
+    position: 'absolute',
+    top: 40,
+    right: 24,
+    zIndex: 10,
+  },
 });

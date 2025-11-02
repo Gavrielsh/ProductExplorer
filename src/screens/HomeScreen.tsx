@@ -1,3 +1,4 @@
+// src/screens/HomeScreen.tsx
 import React from 'react';
 import {
   View,
@@ -15,12 +16,12 @@ import { useAppDispatch, useAppSelector } from '../hooks';
 import { fetchProducts } from '../slices/productsSlice';
 import { selectProducts } from '../selectors/productsSelectors';
 import ProductItem from '../components/ProductItem';
-import { useTheme, useThemeMode } from '../theme/ThemeProvider';
+import { useTheme } from '../theme/ThemeProvider';
+import ThemeToggleButton from '../components/ThemeToggleButton';
 import type { RootStackParamList } from '../navigation/AppNavigator';
 
 /**
  * Navigation type for the "Products" stack screen.
- * This replaces the old 'Home' type reference.
  */
 type Nav = NativeStackNavigationProp<RootStackParamList, 'Products'>;
 
@@ -28,12 +29,11 @@ type Nav = NativeStackNavigationProp<RootStackParamList, 'Products'>;
  * HomeScreen (Products List)
  * --------------------------
  * - Displays a searchable list of products
- * - Includes "Fetch" and "Theme toggle" buttons
+ * - Includes a "Fetch" button and a reusable ThemeToggleButton
  * - Supports pull-to-refresh and product filtering
  */
 export default function HomeScreen() {
   const t = useTheme();
-  const { mode, toggle } = useThemeMode();
   const navigation = useNavigation<Nav>();
   const dispatch = useAppDispatch();
 
@@ -112,9 +112,9 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      {/* Action bar: Fetch + Theme toggle */}
+      {/* Action bar: Fetch + Theme toggle (reusable component) */}
       <View style={[styles.actionBar, { backgroundColor: t.colors.bg }]}>
-        <View style={{ flexDirection: 'row', gap: 8 }}>
+        <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
           <Pressable
             onPress={onFetchPress}
             style={({ pressed }) => [
@@ -126,22 +126,8 @@ export default function HomeScreen() {
             <Text style={styles.btnText}>Fetch</Text>
           </Pressable>
 
-          <Pressable
-            onPress={toggle}
-            style={({ pressed }) => [
-              styles.btn,
-              {
-                backgroundColor: t.colors.card,
-                borderWidth: StyleSheet.hairlineWidth,
-                borderColor: t.colors.border,
-              },
-              pressed && { opacity: 0.9 },
-            ]}
-          >
-            <Text style={[styles.btnText, { color: t.colors.text }]}>
-              {mode === 'dark' ? 'Light Mode' : 'Dark Mode'}
-            </Text>
-          </Pressable>
+          {/* Reusable theme toggle button */}
+          <ThemeToggleButton bordered />
         </View>
       </View>
 
