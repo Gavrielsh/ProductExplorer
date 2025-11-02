@@ -19,17 +19,17 @@ import { useTheme, useThemeMode } from '../theme/ThemeProvider';
 import type { RootStackParamList } from '../navigation/AppNavigator';
 
 /**
- * Navigation type for "Home" stack screen.
+ * Navigation type for the "Products" stack screen.
+ * This replaces the old 'Home' type reference.
  */
-type Nav = NativeStackNavigationProp<RootStackParamList, 'Home'>;
+type Nav = NativeStackNavigationProp<RootStackParamList, 'Products'>;
 
 /**
- * HomeScreen
- * ----------
- * - Search bar (separate)
- * - Separate top action bar with: Fetch + Theme toggle
- * - Pull-to-refresh and initial fetch
- * - FlatList perf tweaks
+ * HomeScreen (Products List)
+ * --------------------------
+ * - Displays a searchable list of products
+ * - Includes "Fetch" and "Theme toggle" buttons
+ * - Supports pull-to-refresh and product filtering
  */
 export default function HomeScreen() {
   const t = useTheme();
@@ -43,6 +43,7 @@ export default function HomeScreen() {
 
   const [query, setQuery] = React.useState('');
 
+  // Filter products based on the search query
   const filtered = React.useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return items;
@@ -53,6 +54,7 @@ export default function HomeScreen() {
     });
   }, [items, query]);
 
+  // Fetch products on first render
   React.useEffect(() => {
     if (status === 'idle') {
       dispatch(fetchProducts());
@@ -67,16 +69,20 @@ export default function HomeScreen() {
     dispatch(fetchProducts());
   }, [dispatch]);
 
+  // Navigate to ProductDetails screen
   const openDetails = React.useCallback(
     (id: number) => navigation.navigate('ProductDetails', { id }),
     [navigation],
   );
 
+  // Show loader on initial fetch
   if (status === 'loading' && items.length === 0) {
     return (
       <View style={[styles.center, { backgroundColor: t.colors.bg }]}>
         <ActivityIndicator color={t.colors.primary} />
-        <Text style={{ color: t.colors.text, marginTop: 8, fontWeight: '700' }}>Loading products…</Text>
+        <Text style={{ color: t.colors.text, marginTop: 8, fontWeight: '700' }}>
+          Loading products…
+        </Text>
       </View>
     );
   }
@@ -124,7 +130,11 @@ export default function HomeScreen() {
             onPress={toggle}
             style={({ pressed }) => [
               styles.btn,
-              { backgroundColor: t.colors.card, borderWidth: StyleSheet.hairlineWidth, borderColor: t.colors.border },
+              {
+                backgroundColor: t.colors.card,
+                borderWidth: StyleSheet.hairlineWidth,
+                borderColor: t.colors.border,
+              },
               pressed && { opacity: 0.9 },
             ]}
           >
@@ -135,13 +145,17 @@ export default function HomeScreen() {
         </View>
       </View>
 
+      {/* Error message */}
       {error ? (
         <Text style={[styles.error, { color: t.colors.danger }]}>Error: {error}</Text>
       ) : null}
 
+      {/* Empty state */}
       {status !== 'loading' && filtered.length === 0 ? (
         <View style={[styles.center, { backgroundColor: t.colors.bg }]}>
-          <Text style={{ color: t.colors.textMuted, fontWeight: '700' }}>No products match your search.</Text>
+          <Text style={{ color: t.colors.textMuted, fontWeight: '700' }}>
+            No products match your search.
+          </Text>
         </View>
       ) : (
         <FlatList
@@ -183,7 +197,6 @@ const styles = StyleSheet.create({
   searchIcon: { fontSize: 16, marginRight: 6 },
   searchInput: { flex: 1, fontSize: 14, fontWeight: '500' },
   error: { paddingHorizontal: 12, marginBottom: 6 },
-
   btn: { borderRadius: 999, paddingHorizontal: 14, paddingVertical: 8 },
   btnText: { color: '#fff', fontWeight: '800', fontSize: 12, letterSpacing: 0.2 },
 });
