@@ -17,7 +17,6 @@ import { fetchProducts } from '../slices/productsSlice';
 import { selectProducts } from '../selectors/productsSelectors';
 import ProductItem from '../components/ProductItem';
 import { useTheme } from '../theme/ThemeProvider';
-import ThemeToggleButton from '../components/ThemeToggleButton';
 import type { RootStackParamList } from '../navigation/AppNavigator';
 
 /**
@@ -29,8 +28,9 @@ type Nav = NativeStackNavigationProp<RootStackParamList, 'Products'>;
  * HomeScreen (Products List)
  * --------------------------
  * - Displays a searchable list of products
- * - Includes a "Fetch" button and a reusable ThemeToggleButton
+ * - Includes a "Fetch" button
  * - Supports pull-to-refresh and product filtering
+ * - Theme toggle button is now in the header (via AppNavigator)
  */
 export default function HomeScreen() {
   const t = useTheme();
@@ -112,23 +112,18 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      {/* Action bar: Fetch + Theme toggle (reusable component) */}
+      {/* Action bar: Fetch button only (theme toggle moved to header) */}
       <View style={[styles.actionBar, { backgroundColor: t.colors.bg }]}>
-        <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
-          <Pressable
-            onPress={onFetchPress}
-            style={({ pressed }) => [
-              styles.btn,
-              { backgroundColor: t.colors.primary },
-              pressed && { opacity: 0.9 },
-            ]}
-          >
-            <Text style={styles.btnText}>Fetch</Text>
-          </Pressable>
-
-          {/* Reusable theme toggle button */}
-          <ThemeToggleButton bordered />
-        </View>
+        <Pressable
+          onPress={onFetchPress}
+          style={({ pressed }) => [
+            styles.btn,
+            { backgroundColor: t.colors.primary },
+            pressed && { opacity: 0.9 },
+          ]}
+        >
+          <Text style={styles.btnText}>Fetch</Text>
+        </Pressable>
       </View>
 
       {/* Error message */}
@@ -170,7 +165,7 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  topBar: { paddingHorizontal: 12, paddingTop: 8, paddingBottom: 4, gap: 8 },
+  topBar: { paddingHorizontal: 12, paddingTop: 8, paddingBottom: 4 },
   actionBar: { paddingHorizontal: 12, paddingBottom: 6 },
   searchWrap: {
     flexDirection: 'row',

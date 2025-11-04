@@ -8,6 +8,7 @@ import FavoritesScreen from '../screens/FavoritesScreen';
 import { useAppSelector } from '../hooks';
 import { useTheme } from '../theme/ThemeProvider';
 import HomeDashboard from '../screens/HomeDashboard';
+import ThemeToggleButton from '../components/ThemeToggleButton';
 
 /**
  * RootStackParamList
@@ -26,6 +27,20 @@ const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 /**
+ * HeaderRight Component
+ * ---------------------
+ * Reusable component for header right side (theme toggle button)
+ */
+function HeaderRight() {
+  return (
+    <ThemeToggleButton 
+      bordered={false} 
+      style={{ marginRight: 12 }} 
+    />
+  );
+}
+
+/**
  * HomeStack
  * ----------
  * Manages the navigation flow for the "Home" tab:
@@ -42,6 +57,7 @@ function HomeStack() {
     contentStyle: { backgroundColor: t.colors.bg },
     animation: 'slide_from_right',
     animationDuration: 350,
+    headerRight: () => <HeaderRight />, // Add theme toggle to all screens
   };
 
   return (
@@ -49,7 +65,7 @@ function HomeStack() {
       <Stack.Screen
         name="Home"
         component={HomeDashboard}
-        options={{ title: 'Home', headerShown: false }}
+        options={{ title: 'Home' }}
       />
       <Stack.Screen
         name="Products"
@@ -81,6 +97,7 @@ function FavoritesStack() {
     contentStyle: { backgroundColor: t.colors.bg },
     animation: 'slide_from_right',
     animationDuration: 350,
+    headerRight: () => <HeaderRight />, // Add theme toggle to all screens
   };
 
   return (
