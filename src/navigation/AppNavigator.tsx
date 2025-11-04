@@ -1,3 +1,5 @@
+// src/navigation/AppNavigator.tsx
+
 import React from 'react';
 import { createBottomTabNavigator, BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react-navigation/native-stack';
@@ -9,6 +11,7 @@ import { useAppSelector } from '../hooks';
 import { useTheme } from '../theme/ThemeProvider';
 import HomeDashboard from '../screens/HomeDashboard';
 import ThemeToggleButton from '../components/ThemeToggleButton';
+import { Pressable } from 'react-native'; // ודא שהוספת את זה
 
 /**
  * RootStackParamList
@@ -16,10 +19,10 @@ import ThemeToggleButton from '../components/ThemeToggleButton';
  * Defines all navigation parameters for this app.
  */
 export type RootStackParamList = {
-  Home: undefined;            // Dashboard
-  Products: undefined;        // Product list
+  Home: undefined; // Dashboard
+  Products: undefined; // Product list
   ProductDetails: { id: number };
-  FavoritesList: undefined;   // Favorites list
+  FavoritesList: undefined; // Favorites list
 };
 
 // Create navigator instances
@@ -33,9 +36,9 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
  */
 function HeaderRight() {
   return (
-    <ThemeToggleButton 
-      bordered={false} 
-      style={{ marginRight: 12 }} 
+    <ThemeToggleButton
+      bordered={false}
+      style={{ marginRight: 12 }}
     />
   );
 }
@@ -105,7 +108,22 @@ function FavoritesStack() {
       <Stack.Screen
         name="FavoritesList"
         component={FavoritesScreen}
-        options={{ title: 'Favorites' }}
+        options={({ navigation }) => ({ 
+          title: 'Favorites',
+          headerLeft: () => ( 
+            <Pressable
+              onPress={() => navigation.goBack()}
+              style={{ padding: 5, marginRight: 10, marginLeft: 5 }}
+              android_ripple={{ color: 'rgba(0,0,0,0.2)', borderless: true, radius: 22 }}
+            >
+              <Ionicons
+                name="arrow-back"
+                size={24}
+                color={t.colors.text}
+              />
+            </Pressable>
+          ),
+        })}
       />
       <Stack.Screen
         name="ProductDetails"

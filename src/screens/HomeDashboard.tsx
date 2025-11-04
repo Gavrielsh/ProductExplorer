@@ -70,7 +70,7 @@ export default function HomeDashboard() {
 
         {/* Favorites Card */}
         <Pressable
-          onPress={() => navigation.navigate('FavoritesList')}
+          onPress={() => navigation.getParent()?.navigate('FavoritesTab')}
           style={({ pressed }) => [
             styles.card,
             {
